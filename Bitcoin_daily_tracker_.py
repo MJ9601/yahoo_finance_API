@@ -20,38 +20,32 @@ response = requests.request("GET", url, headers=headers, params=querystring)
 
 # print(response.text)
 res = json.loads(response.text)
-# data=pd.read_json(orient='index')
-# print(data)
+data = pd.DataFrame(res)
 
-date = []
-close_USD = []
-volume = []
-open_USD = []
-high_USD = []
-low_USD = []
-market_USD = []
-for key, value in res["Time Series (Digital Currency Daily)"].items():
+last_refreshed = data.loc['6. Last Refreshed']['Meta Data']
+Time_zone = data.loc['7. Time Zone']['Meta Data']
 
-    date.append(key)
-    close_USD.append(float(value["4b. close (USD)"]))
-    volume.append(float(value["5. volume"]))
-    open_USD.append(float(value["1b. open (USD)"]))
-    high_USD.append(float(value["2b. high (USD)"]))
-    low_USD.append(float(value["3b. low (USD)"]))
-    market_USD.append(float(value["6. market cap (USD)"]))
+data.dropna(axis='index', how='all', subset=['Time Series (Digital Currency Daily)'], inplace=True)
+
+data.dropna(axis='columns', how='all', inplace=True)
+data.columns=['treding stuff']
+
+data.index.rename('Date', inplace=True)
 
 
-# date.append(key)
-# close_USD.append(float(value["4b. close (USD)"]))
-# volume.append(float(value["5. volume"]))
-# open_USD.append(float(value["1b. open (USD)"]))
-# high_USD.append(float(value["2b. high (USD)"]))
-# low_USD.append(float(value["3b. low (USD)"]))
-# market_USD.append(float(value["6. market cap (USD)"]))
-    
+data['openUSD'] = (data['treding stuff'].apply(lambda x: x.get('1b. open (USD)', 0))).astype(float)
+data['highUSD'] = (data['treding stuff'].apply(lambda x: x.get('2b. high (USD)', 0))).astype(float)
+data['lowUSD'] = (data['treding stuff'].apply(lambda x: x.get('3b. low (USD)', 0))).astype(float)
+data['CloseUSD'] = (data['treding stuff'].apply(lambda x: x.get('4b. close (USD)', 0))).astype(float)
+data['Valume'] = (data['treding stuff'].apply(lambda x: x.get('5. volume', 0))).astype(float)
+data['MarketCapUSD'] = (data['treding stuff'].apply(lambda x: x.get('6. market cap (USD)', 0))).astype(float)
 
-date = pd.to_datetime(date)
-date.sort_values()
+
+starting_point = data.loc['2020-01-01']['CloseUSD'].min()
+
+
+
+
 
 # date format
 # %Y = full year 2020
@@ -67,22 +61,22 @@ date.sort_values()
 
 fig = plt.figure()
 ax=plt.subplot2grid((1,1), (0,0))
-ax.fill_between(date, close_USD, close_USD[0],
-            
+ax.fill_between(data.index, data['CloseUSD'], starting_point,
+            where=(data['CloseUSD'] > starting_point),
             alpha=0.5, facecolor='g',
             interpolate=True,
             label='Profect'
              )
 
-ax.fill_between(date, close_USD, close_USD[0],
-            
+ax.fill_between(data.index, data['CloseUSD'], starting_point,
+            where=(data['CloseUSD'] < starting_point),
             alpha=0.5, facecolor='r',
             interpolate=True,
             label='Loss'
              )
 
 
-ax.plot_date(date, close_USD, '-', label='Price')
+ax.plot_date(data.index, data['CloseUSD'], '-', label='Price')
 
 for label in ax.xaxis.get_ticklabels():
     label.set_rotation(30)
@@ -94,7 +88,7 @@ plt.gca().xaxis.set_major_formatter(date_format)
 plt.legend()
 plt.xlabel('Date')
 plt.ylabel('Price (USD)')
-ax.grid(True, color='g', linestyle=':', linewidth=.5)
+# ax.grid(True, color='g', linestyle=':', linewidth=.5)
 # solid line '-' or 'solid'
 # dashed line '--' or 'dashed'
 # dashed-dotted line '-.' or 'dashedot'
@@ -107,7 +101,7 @@ ax.set_yticks([0, 5000, 10000, 15000, 20000]) # set value for the y axis
 
 
 
-# plt.tight_layout()
+plt.tight_layout()
 plt.subplots_adjust(bottom=0.20, left=0.121, right=0.94, top=0.90, wspace=0.2, hspace=0)
 plt.show()
 
