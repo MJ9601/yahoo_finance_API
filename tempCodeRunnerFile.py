@@ -1,1 +1,1 @@
-plt.tight_layout()
+plt.xlabel('Date')

@@ -4,6 +4,8 @@ import pandas as pd
 from datetime import datetime, timedelta
 from matplotlib import pyplot as plt
 from matplotlib import dates as mpl_dates
+import matplotlib.dates as mdates
+import matplotlib.cbook as cbook
 import requests
 
 
@@ -78,15 +80,36 @@ ax.fill_between(data.index, data['CloseUSD'], starting_point,
 
 ax.plot_date(data.index, data['CloseUSD'], '-', label='Price')
 
-for label in ax.xaxis.get_ticklabels():
-    label.set_rotation(30)
-date_format = mpl_dates.DateFormatter('%b, %d %Y')
-plt.gca().xaxis.set_major_formatter(date_format)
-# plt.gcf().autofmt_xdate()
+# for label in ax.xaxis.get_ticklabels():
+#     label.set_rotation(30)
+# date_format = mpl_dates.DateFormatter('%b, %d %Y')
+# plt.gca().xaxis.set_major_formatter(date_format)
+
+
+# years = mdates.YearLocator()   # every year
+# months = mdates.MonthLocator()  # every month
+# years_fmt = mdates.DateFormatter('%Y')
+
+# # format the ticks
+# ax.xaxis.set_major_locator(years)
+# ax.xaxis.set_major_formatter(years_fmt)
+# # ax.xaxis.set_minor_locator(months)
+
+# # myFmt = mdates.DateFormatter('%d')
+# # ax.xaxis.set_major_formatter(myFmt)
+
+fig.autofmt_xdate()
+# locator = mdates.AutoDateLocator(minticks=3, maxticks=7)
+# formatter = mdates.ConciseDateFormatter(locator)
+
+
+# ax.format_xdata = mdates.DateFormatter('%Y-%m-%d')
+# ax.format_ydata = lambda x: '$%1.2f' % x  # format the price.
+# ax.grid(True)
 
 
 plt.legend()
-plt.xlabel('Date')
+# plt.xlabel('Date')
 plt.ylabel('Price (USD)')
 # ax.grid(True, color='g', linestyle=':', linewidth=.5)
 # solid line '-' or 'solid'
@@ -97,7 +120,7 @@ plt.ylabel('Price (USD)')
 
 ax.xaxis.label.set_color('c')
 ax.yaxis.label.set_color('r')
-ax.set_yticks([0, 5000, 10000, 15000, 20000]) # set value for the y axis
+# ax.set_yticks([0, 5000, 10000, 15000, 20000]) # set value for the y axis
 
 
 
