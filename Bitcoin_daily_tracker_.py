@@ -42,7 +42,7 @@ data['MarketCapUSD'] = (data['treding stuff'].apply(lambda x: x.get('6. market c
 
 
 starting_point = data.loc['2020-01-01']['CloseUSD'].min()
-
+data.index = pd.to_datetime(data.index)
 
 
 
@@ -59,6 +59,7 @@ starting_point = data.loc['2020-01-01']['CloseUSD'].min()
 # for i in range(len(date)):
 #     print(f'{date[i]}, {close_USD[i]}, {volume[i]}, {open_USD[i]}, {high_USD[i]}, {low_USD[i]}, {market_USD[i]}')
 
+# ploting
 fig = plt.figure()
 ax=plt.subplot2grid((1,1), (0,0))
 ax.fill_between(data.index, data['CloseUSD'], starting_point,
@@ -82,12 +83,13 @@ for label in ax.xaxis.get_ticklabels():
     label.set_rotation(30)
 date_format = mpl_dates.DateFormatter('%b, %d %Y')
 plt.gca().xaxis.set_major_formatter(date_format)
-# plt.gcf().autofmt_xdate()
+plt.gcf().autofmt_xdate()
 
 
 plt.legend()
 plt.xlabel('Date')
 plt.ylabel('Price (USD)')
+
 # ax.grid(True, color='g', linestyle=':', linewidth=.5)
 # solid line '-' or 'solid'
 # dashed line '--' or 'dashed'
@@ -105,10 +107,8 @@ plt.tight_layout()
 plt.subplots_adjust(bottom=0.20, left=0.121, right=0.94, top=0.90, wspace=0.2, hspace=0)
 plt.show()
 
-
-
-
-
 # with open('finance_data.csv', 'w', ) as datafile:
 #     csv_writer = csv.writer(datafile)
 #     csv_writer.writerow(response)
+
+
